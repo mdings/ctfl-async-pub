@@ -9,13 +9,21 @@ import App from './App';
 
 const root = document.getElementById('root');
 
+// Overwrite any styles we want to overwrite
+const overwriteStyles = {
+  'html': {
+    // 'border': '1px solid green',
+    // 'height': '400px'
+  }
+}
+
 if (process.env.NODE_ENV === 'development' && window.self === window.top) {
   // You can remove this if block before deploying your app
   render(<LocalhostWarning />, root);
 } else {
   render(
     <SDKProvider>
-      <GlobalStyles />
+      <GlobalStyles styles={overwriteStyles} />
       <App />
     </SDKProvider>,
     root

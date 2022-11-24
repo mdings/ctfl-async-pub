@@ -1,5 +1,6 @@
 import React from 'react';
-import { Paragraph, Button, Checkbox, Notification, Autocomplete, Stack, SortableList, SortablePill, SortablePillHandle, Box, Pill, Flex } from '@contentful/f36-components';
+import { Paragraph, Badge, Button, Checkbox, Notification, Autocomplete, Stack, SortableList, SortablePill, SortablePillHandle, Box, Pill, Flex } from '@contentful/f36-components';
+import { Multiselect } from '@contentful/f36-multiselect';
 import { DragIcon } from '@contentful/f36-icons';
 import tokens from '@contentful/f36-tokens';
 import { /* useCMA, */ useSDK } from '@contentful/react-apps-toolkit';
@@ -10,23 +11,22 @@ import {
 } from 'react-sortable-hoc';
 // import arrayMove from 'https://cdn.jsdelivr.net/npm/array-move@4.0.0/';
 
-
 ////////////////////////////////////////////////////////////////
 ////////FUNCTION TO SHOW CHECKBOX GROUP
 ////////////////////////////////////////////////////////////////
 const RenderCheckboxGroup = (sdk) => {
-  let locales = sdk.locales;
+  let locales = sdk.locales
 
-  let checkBoxes = locales.available.map((locale) =>
-    <Checkbox key={locale} value={locale} id={locale}>{locale}</Checkbox>
-  );
+  let checkBoxes = locales.available.map((locale) => {
+    return (
+        <Checkbox key={locale} value={locale} id={locale}>{locales.names[locale]}</Checkbox>
+    )
+  });
 
   return (
-    <div>
-      <Checkbox.Group name="checkbox-options" defaultValue={['option 1']} >
-        {checkBoxes}
-      </Checkbox.Group>
-    </div>
+    <Flex gap={tokens.spacingM} style={{'flexWrap': 'wrap'}}>
+     {checkBoxes}
+    </Flex>
   )
 }
 
@@ -42,7 +42,6 @@ const RenderAutocomplete = (sdk) => {
   const [filteredItems, setFilteredItems] = React.useState(locales);
 
   const handleInputValueChange = (value) => {
-
     const newFilteredItems = locales.filter((item) =>
       item.toLowerCase().includes(value.toLowerCase()),
     );
@@ -61,6 +60,8 @@ const RenderAutocomplete = (sdk) => {
         <Stack flexDirection="column" alignItems="start">
           <Autocomplete
             items={locales}
+            listMaxHeight='140'
+            listWidth='auto'
             onInputValueChange={handleInputValueChange}
             onSelectItem={handleSelectItem}
             itemToString={(item) => item}
@@ -71,11 +72,11 @@ const RenderAutocomplete = (sdk) => {
           </Autocomplete>
           <span>
             <Paragraph>Selected Locales:</Paragraph>
-            <ul>
+            <Flex style={{"flexWrap": "wrap"}} gap={tokens.spacingXs}>
               {selectedLocales.map((locale, index) => (
-                <li key={index}>{locale}</li>
+                  <Pill label={locale} onClose={() => {}}></Pill>
               ))}
-            </ul>
+            </Flex>
           </span>
         </Stack>
       </div>
@@ -186,13 +187,25 @@ const Sidebar = () => {
   */
   //const cma = useCMA();
 
-  return <div>
-    <Paragraph>Select the locales you would like to publish </Paragraph>
+  // setTimeout(() => {
+  //   sdk.window.updateHeight()
+  // }, 2000)
+  
 
-    {RenderCheckboxGroup(sdk)}
+  return <Stack flexDirection="column" alignItems="flex-start">
+    <Paragraph>Select the locales you would like to publish</Paragraph>
 
-    {RenderAutocomplete(sdk)}
+    <Stack flexDirection="column" alignItems="flex-start">
+      <Badge variant="warning">Draft</Badge>
+      {RenderCheckboxGroup(sdk)}
+    </Stack>
 
+    <Stack flexDirection="column" alignItems="flex-start">
+      <Badge variant="positive">Published</Badge>
+      <Checkbox key="fr-fr" value="fr-fr" id="fr-fr" isDisabled={true}>French (France)</Checkbox>
+    </Stack>
+    
+    {/* {RenderAutocomplete(sdk)} */}
     {/* {IntegrationPillExample(sdk)} */}
 
     <div style={{ marginTop: tokens.spacingM }}>
@@ -205,7 +218,7 @@ const Sidebar = () => {
       </Button>
     </div>
 
-  </div>
+  </Stack>
 };
 
 export default Sidebar;

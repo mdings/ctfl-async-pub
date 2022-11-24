@@ -22,6 +22,8 @@ const ComponentLocationSettings = {
 const App = () => {
   const sdk = useSDK();
 
+  sdk.window.startAutoResizer(true)
+
   const Component = useMemo(() => {
     for (const [location, component] of Object.entries(ComponentLocationSettings)) {
       if (sdk.location.is(location)) {
